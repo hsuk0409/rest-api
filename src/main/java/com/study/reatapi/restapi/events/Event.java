@@ -2,12 +2,15 @@ package com.study.reatapi.restapi.events;
 
 import lombok.*;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "id")
+@Entity
 public class Event {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
     private String description;
@@ -21,12 +24,13 @@ public class Event {
     private int limitOfEnrollment;
     private boolean offline;
     private boolean free;
-    private EventStatus eventStatus;
+    @Enumerated(EnumType.STRING)
+    private EventStatus eventStatus = EventStatus.DRAFT;
 
     @Builder
     public Event(Integer id, String name, String description, LocalDateTime beginEnrollmentDateTime, LocalDateTime closeEnrollmentDateTime,
                  LocalDateTime beginEventDateTime, LocalDateTime endEventDateTime, String location, int basePrice, int maxPrice, int limitOfEnrollment,
-                 boolean offline, boolean free, EventStatus eventStatus) {
+                 boolean offline, boolean free) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -40,10 +44,32 @@ public class Event {
         this.limitOfEnrollment = limitOfEnrollment;
         this.offline = offline;
         this.free = free;
-        this.eventStatus = eventStatus;
     }
 
-    public void initEvent() {
+    public void initId() {
         this.id = 10;
+    }
+
+
+    public boolean wasWrongPrice() {
+        return this.maxPrice > 0 && this.basePrice > this.maxPrice;
+    }
+
+    public boolean wasWrongEndEventDate() {
+        return this.endEventDateTime.isBefore(this.beginEnrollmentDateTime) ||
+                this.endEventDateTime.isBefore(this.beginEventDateTime) ||
+                this.endEventDateTime.isBefore(this.closeEnrollmentDateTime);
+    }
+
+    public boolean wasWrongBeginEventDate() {
+        return this.beginEventDateTime.isAfter(this.endEventDateTime) ||
+                this.beginEventDateTime.isBefore(this.beginEnrollmentDateTime) ||
+                this.beginEventDateTime.isBefore(this.closeEnrollmentDateTime);
+    }
+
+    public boolean wasWrongCloseEnrollmentEventDate() {
+        return this.closeEnrollmentDateTime.isBefore(this.beginEnrollmentDateTime) ||
+                this.closeEnrollmentDateTime.isAfter(this.beginEventDateTime) ||
+                this.closeEnrollmentDateTime.isAfter(this.endEventDateTime);
     }
 }
