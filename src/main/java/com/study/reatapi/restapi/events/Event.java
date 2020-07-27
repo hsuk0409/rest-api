@@ -72,4 +72,12 @@ public class Event {
                 this.closeEnrollmentDateTime.isAfter(this.beginEventDateTime) ||
                 this.closeEnrollmentDateTime.isAfter(this.endEventDateTime);
     }
+
+    public void validIsFree() {
+        this.free =  this.basePrice == 0 && this.maxPrice == 0 ? true : false;
+    }
+
+    public void validIsOffline() {
+        this.offline = this.location == null ? false : true;
+    }
 }

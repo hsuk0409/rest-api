@@ -27,6 +27,9 @@ public class EventController {
                 event.wasWrongBeginEventDate() || event.wasWrongCloseEnrollmentEventDate())
             return ResponseEntity.badRequest().build();
 
+        event.validIsFree();
+        event.validIsOffline();
+
         Event savedEvent = eventRepository.save(event);
         URI uri = linkTo(EventController.class).slash(savedEvent.getId()).toUri();
         return ResponseEntity.created(uri).body(savedEvent);
