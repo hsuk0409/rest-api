@@ -58,11 +58,15 @@ public class EventControllerTest {
                 .andExpect(jsonPath("id").value(Matchers.not(100)))
                 .andExpect(jsonPath("free").value(false))
                 .andExpect(jsonPath("offline").value(true))
-                .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()));
+                .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()))
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.query-events").exists())
+                .andExpect(jsonPath("_links.update-event").exists())
+        ;
     }
 
     @Test
-    public void 이벤트_생성시_이상한_입력값() throws Exception {
+    public void 이벤트_생성시_불필요한_입력값_있을경우() throws Exception {
         Event event = Event.builder()
                 .id(100)
                 .name("Spring")

@@ -1,6 +1,7 @@
 package com.study.reatapi.restapi.events;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,11 +28,12 @@ public class EventController {
                 event.wasWrongBeginEventDate() || event.wasWrongCloseEnrollmentEventDate())
             return ResponseEntity.badRequest().build();
 
-        event.validIsFree();
-        event.validIsOffline();
+        event.verifyIsFree();
+        event.verifyIsOffline();
 
         Event savedEvent = eventRepository.save(event);
         URI uri = linkTo(EventController.class).slash(savedEvent.getId()).toUri();
-        return ResponseEntity.created(uri).body(savedEvent);
+
+        return ResponseEntity.created(uri).body(new EventResource(savedEvent));
     }
 }

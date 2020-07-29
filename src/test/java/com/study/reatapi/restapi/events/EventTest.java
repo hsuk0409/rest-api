@@ -21,7 +21,7 @@ public class EventTest {
                 .build();
 
         // When
-        event.validIsFree();
+        event.verifyIsFree();
         // Then
         assertThat(event.isFree()).isTrue();
     }
@@ -35,7 +35,7 @@ public class EventTest {
                 .build();
 
         // When
-        event.validIsFree();
+        event.verifyIsFree();
         // Then
         assertThat(event.isFree()).isFalse();
 
@@ -46,7 +46,7 @@ public class EventTest {
                 .build();
 
         // When
-        event.validIsFree();
+        event.verifyIsFree();
         // Then
         assertThat(event.isFree()).isFalse();
     }
@@ -59,7 +59,7 @@ public class EventTest {
                 .build();
 
         // When
-        event.validIsOffline();
+        event.verifyIsOffline();
 
         // Then
         assertThat(event.isOffline()).isTrue();
@@ -69,7 +69,7 @@ public class EventTest {
                 .build();
 
         // When
-        event.validIsOffline();
+        event.verifyIsOffline();
 
         // Then
         assertThat(event.isOffline()).isFalse();
