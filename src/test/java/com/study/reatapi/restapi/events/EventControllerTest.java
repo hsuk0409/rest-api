@@ -14,6 +14,7 @@ import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -34,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
 @Import(RestDocsConfiguration.class)
+@ActiveProfiles("test")
 public class EventControllerTest {
 
     @Autowired
@@ -77,7 +79,8 @@ public class EventControllerTest {
                         links(
                                 linkWithRel("self").description("link to self"),
                                 linkWithRel("query-events").description("link to query-events"),
-                                linkWithRel("update-event").description("link to update-event")
+                                linkWithRel("update-event").description("link to update-event"),
+                                linkWithRel("profile").description("link to profile")
                         ),
                         requestHeaders(
                                 headerWithName(HttpHeaders.ACCEPT).description("accept headers"),
@@ -116,7 +119,8 @@ public class EventControllerTest {
                                 fieldWithPath("eventStatus").description("EventStatus of new event"),
                                 fieldWithPath("_links.self.href").type(JsonFieldType.STRING).description("My href").optional(),
                                 fieldWithPath("_links.query-events.href").type(JsonFieldType.STRING).description("Query-events href").optional(),
-                                fieldWithPath("_links.update-event.href").type(JsonFieldType.STRING).description("Update-event href").optional()
+                                fieldWithPath("_links.update-event.href").type(JsonFieldType.STRING).description("Update-event href").optional(),
+                                fieldWithPath("_links.profile.href").type(JsonFieldType.STRING).description("Profile href").optional()
                         )
                 ));
         ;
