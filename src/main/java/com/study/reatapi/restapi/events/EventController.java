@@ -1,7 +1,7 @@
 package com.study.reatapi.restapi.events;
 
+import com.study.reatapi.restapi.common.ErrorResource;
 import lombok.RequiredArgsConstructor;
-import org.springframework.hateoas.mvc.ControllerLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,17 +23,20 @@ public class EventController {
     @PostMapping
     public ResponseEntity createEvents(@RequestBody @Valid EventSaveRequestDto eventDto, Errors errors) {
         Event event = eventDto.dtoToEntity();
-        if(errors.hasErrors()) return ResponseEntity.badRequest().build();
-        if(event.wasWrongPrice() || event.wasWrongEndEventDate() ||
-                event.wasWrongBeginEventDate() || event.wasWrongCloseEnrollmentEventDate())
-            return ResponseEntity.badRequest().build();
+        if(errors.hasErrors()) return getBadRequest(errors);
+        Errors wrongEventValue = event.wasWrongValue(errors);
+        if(wrongEventValue.hasErrors()) return getBadRequest(wrongEventValue);
 
-        event.verifyIsFree();
-        event.verifyIsOffline();
+        event.verifyIsFreeForSetting();
+        event.verifyIsOfflineForSetting();
 
         Event savedEvent = eventRepository.save(event);
         URI uri = linkTo(EventController.class).slash(savedEvent.getId()).toUri();
 
         return ResponseEntity.created(uri).body(new EventResource(savedEvent));
+    }
+
+    private ResponseEntity getBadRequest(Errors errors) {
+        return ResponseEntity.badRequest().body(new ErrorResource(errors));
     }
 }

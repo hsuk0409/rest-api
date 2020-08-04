@@ -1,6 +1,7 @@
 package com.study.reatapi.restapi.events;
 
 import lombok.*;
+import org.springframework.validation.Errors;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -46,13 +47,14 @@ public class Event {
         this.free = free;
     }
 
-    public void initId() {
-        this.id = 10;
-    }
-
-
     public boolean wasWrongPrice() {
         return this.maxPrice > 0 && this.basePrice > this.maxPrice;
+    }
+
+    public boolean waWrongBeginEnrollmentDate() {
+        return this.beginEnrollmentDateTime.isAfter(this.beginEventDateTime) ||
+                this.beginEnrollmentDateTime.isAfter(this.closeEnrollmentDateTime) ||
+                this.beginEnrollmentDateTime.isAfter(this.endEventDateTime);
     }
 
     public boolean wasWrongEndEventDate() {
@@ -73,11 +75,21 @@ public class Event {
                 this.closeEnrollmentDateTime.isAfter(this.endEventDateTime);
     }
 
-    public void verifyIsFree() {
+    public void verifyIsFreeForSetting() {
         this.free =  this.basePrice == 0 && this.maxPrice == 0 ? true : false;
     }
 
-    public void verifyIsOffline() {
+    public void verifyIsOfflineForSetting() {
         this.offline = this.location == null ? false : true;
+    }
+
+    public Errors wasWrongValue(Errors errors) {
+        if(wasWrongPrice()) errors.reject("wrongPrices", "Value of prices are wrong");
+        if(waWrongBeginEnrollmentDate()) errors.rejectValue("beginEnrollmentDateTime", "wrongValue", "BeginEnrollmentDateTime of event is wrong");
+        if(wasWrongBeginEventDate()) errors.rejectValue("beginEventDateTime", "wrongValue", "BeginEventDateTime of event is wrong");
+        if(wasWrongEndEventDate()) errors.rejectValue("endEventDateTime", "wrongValue", "EndEventDateTime of event is wrong");
+        if(wasWrongCloseEnrollmentEventDate()) errors.rejectValue("closeEnrollmentDateTime",
+                "wrongValue", "CloseEnrollmentDateTime of event is wrong");
+        return errors;
     }
 }
