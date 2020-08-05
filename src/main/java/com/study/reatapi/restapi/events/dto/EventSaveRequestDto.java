@@ -1,5 +1,6 @@
-package com.study.reatapi.restapi.events;
+package com.study.reatapi.restapi.events.dto;
 
+import com.study.reatapi.restapi.events.Event;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;

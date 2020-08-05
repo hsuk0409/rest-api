@@ -2,6 +2,7 @@ package com.study.reatapi.restapi.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.study.reatapi.restapi.common.RestDocsConfiguration;
+import com.study.reatapi.restapi.events.dto.EventSaveRequestDto;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,12 +20,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.stream.IntStream;
 
 import static org.springframework.restdocs.headers.HeaderDocumentation.*;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -43,6 +46,9 @@ public class EventControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    EventRepository eventRepository;
 
     @Test
     public void 이벤트_정상적으로_생성() throws Exception {
@@ -188,5 +194,39 @@ public class EventControllerTest {
                 .andExpect(jsonPath("content[0].code").exists())
                 .andExpect(jsonPath("_links.index").exists())
         ;
+    }
+
+    @Test
+    public void 서른개의_이벤트_열개씩_두번째_페이지조회() throws Exception {
+        //given
+        IntStream.range(0, 30).forEach(this::generateEvent);
+
+        //when
+        mockMvc.perform(get("/api/events")
+                    .param("pae", "1")
+                    .param("size", "10")
+                    .param("sort", "id,DESC"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("page").exists())
+                .andExpect(jsonPath("_embedded.eventList[0]._links.self").exists())
+                .andExpect(jsonPath("_embedded.eventList[0]._links.profile").exists())
+                .andDo(document("query-events"))
+        ;
+    }
+
+    private Event generateEvent(int i) {
+        return eventRepository.save(Event.builder()
+                .name("event" + i)
+                .description("test event")
+//                .beginEnrollmentDateTime(LocalDateTime.of(2020, 07, 31, 12, 26))
+//                .closeEnrollmentDateTime(LocalDateTime.of(2020, 07, 30, 12, 00))
+//                .beginEventDateTime(LocalDateTime.of(2020, 07, 29, 12, 26))
+//                .endEventDateTime(LocalDateTime.of(2020, 07, 28, 12, 26))
+//                .basePrice(4000)
+//                .maxPrice(2000)
+//                .limitOfEnrollment(100)
+//                .location("판교 삼환 하이펙스")
+                .build());
     }
 }
