@@ -1,19 +1,19 @@
 package com.study.reatapi.restapi.events.dto;
 
 import com.study.reatapi.restapi.events.Event;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.study.reatapi.restapi.events.EventStatus;
+import lombok.*;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Getter
-public class EventSaveRequestDto {
+@Getter @Setter
+public class EventRequestDto {
     @NotEmpty
     private String name;
     @NotEmpty
@@ -33,10 +33,13 @@ public class EventSaveRequestDto {
     private int maxPrice; // (optional)
     @Min(0)
     private int limitOfEnrollment;
+    @Enumerated(EnumType.STRING)
+    private EventStatus eventStatus;
 
     @Builder
-    public EventSaveRequestDto(String name, String description, LocalDateTime beginEnrollmentDateTime, LocalDateTime closeEnrollmentDateTime,
-                               LocalDateTime beginEventDateTime, LocalDateTime endEventDateTime, String location, int basePrice, int maxPrice, int limitOfEnrollment) {
+    public EventRequestDto(String name, String description, LocalDateTime beginEnrollmentDateTime, LocalDateTime closeEnrollmentDateTime,
+                           LocalDateTime beginEventDateTime, LocalDateTime endEventDateTime, String location, int basePrice, int maxPrice,
+                           int limitOfEnrollment, EventStatus eventStatus) {
         this.name = name;
         this.description = description;
         this.beginEnrollmentDateTime = beginEnrollmentDateTime;
@@ -47,6 +50,7 @@ public class EventSaveRequestDto {
         this.basePrice = basePrice;
         this.maxPrice = maxPrice;
         this.limitOfEnrollment = limitOfEnrollment;
+        this.eventStatus = eventStatus;
     }
 
     public Event dtoToEntity() {
@@ -61,6 +65,7 @@ public class EventSaveRequestDto {
                 .basePrice(this.basePrice)
                 .maxPrice(this.maxPrice)
                 .limitOfEnrollment(this.limitOfEnrollment)
+                .eventStatus(this.eventStatus)
                 .build();
     }
 }

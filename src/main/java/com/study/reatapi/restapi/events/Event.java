@@ -1,5 +1,6 @@
 package com.study.reatapi.restapi.events;
 
+import com.study.reatapi.restapi.events.dto.EventRequestDto;
 import lombok.*;
 import org.springframework.validation.Errors;
 
@@ -31,7 +32,7 @@ public class Event {
     @Builder
     public Event(Integer id, String name, String description, LocalDateTime beginEnrollmentDateTime, LocalDateTime closeEnrollmentDateTime,
                  LocalDateTime beginEventDateTime, LocalDateTime endEventDateTime, String location, int basePrice, int maxPrice, int limitOfEnrollment,
-                 boolean offline, boolean free) {
+                 boolean offline, boolean free, EventStatus eventStatus) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -45,6 +46,7 @@ public class Event {
         this.limitOfEnrollment = limitOfEnrollment;
         this.offline = offline;
         this.free = free;
+        this.eventStatus = eventStatus;
     }
 
     public boolean wasWrongPrice() {
@@ -91,5 +93,34 @@ public class Event {
         if(wasWrongCloseEnrollmentEventDate()) errors.rejectValue("closeEnrollmentDateTime",
                 "wrongValue", "CloseEnrollmentDateTime of event is wrong");
         return errors;
+    }
+
+    public Event update(EventRequestDto requestDto) {
+        this.name = requestDto.getName();
+        this.description = requestDto.getDescription();
+        this.beginEnrollmentDateTime = requestDto.getBeginEnrollmentDateTime();
+        this.closeEnrollmentDateTime = requestDto.getCloseEnrollmentDateTime();
+        this.beginEventDateTime = requestDto.getBeginEventDateTime();
+        this.endEventDateTime = requestDto.getEndEventDateTime();
+        this.location = requestDto.getLocation();
+        this.basePrice = requestDto.getBasePrice();
+        this.maxPrice = requestDto.getMaxPrice();
+        this.limitOfEnrollment = requestDto.getLimitOfEnrollment();
+        return this;
+    }
+
+    public EventRequestDto toRequestDto() {
+        return EventRequestDto.builder()
+                .name(this.name)
+                .description(this.description)
+                .beginEnrollmentDateTime(this.beginEnrollmentDateTime)
+                .closeEnrollmentDateTime(this.closeEnrollmentDateTime)
+                .beginEventDateTime(this.beginEventDateTime)
+                .endEventDateTime(this.endEventDateTime)
+                .location(this.location)
+                .basePrice(this.basePrice)
+                .maxPrice(this.maxPrice)
+                .limitOfEnrollment(this.limitOfEnrollment)
+                .build();
     }
 }
