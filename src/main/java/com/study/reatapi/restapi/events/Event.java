@@ -1,5 +1,6 @@
 package com.study.reatapi.restapi.events;
 
+import com.study.reatapi.restapi.accounts.Account;
 import com.study.reatapi.restapi.events.dto.EventRequestDto;
 import lombok.*;
 import org.springframework.validation.Errors;
@@ -28,6 +29,8 @@ public class Event {
     private boolean free;
     @Enumerated(EnumType.STRING)
     private EventStatus eventStatus = EventStatus.DRAFT;
+    @ManyToOne
+    private Account manager;
 
     @Builder
     public Event(Integer id, String name, String description, LocalDateTime beginEnrollmentDateTime, LocalDateTime closeEnrollmentDateTime,
