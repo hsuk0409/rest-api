@@ -24,7 +24,7 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
     private final TokenStore tokenStore;
 
     @Override
-    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
+    public void configure(AuthorizationServerSecurityConfigurer security) {
         security.passwordEncoder(passwordEncoder);
     }
 
@@ -40,7 +40,7 @@ public class AuthServerConfig extends AuthorizationServerConfigurerAdapter {
     }
 
     @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints.authenticationManager(authenticationManager)
                 .userDetailsService(accountService)
                 .tokenStore(tokenStore);
